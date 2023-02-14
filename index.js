@@ -70,7 +70,11 @@ io.on('connection', (socket) => {
 });
 
 function countPlayerInRoom(room) {
-    return io.sockets.adapter.rooms.get(room).size;
+    let players = io.sockets.adapter.rooms.get(room);
+
+    if (players == null) return -1;
+
+    return players.size;
 }
 
 // io.in(roomID).fetchSockets()
