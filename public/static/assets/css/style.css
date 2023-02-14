@@ -170,10 +170,6 @@ body {
     color: white;
 }
 
-input {
-    /* border-radius: 10%; */
-}
-
 canvas {
     background-color: transparent;
 }
