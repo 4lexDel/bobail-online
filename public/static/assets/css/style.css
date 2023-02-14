@@ -1,0 +1,182 @@
+body {
+    background-color: #c7c7c7;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+
+.svg-icon {
+    width: 50px;
+    height: 50px;
+    /* display: block; */
+    transition-duration: 0.7s;
+}
+
+.svg-icon:hover {
+    transition-duration: 0.2s;
+    transition-timing-function: ease-in-out;
+    /* transform: rotate(60deg); */
+    transform: translate(-6px) rotate(5deg);
+}
+
+.svg-icon:hover path {
+    fill: blue;
+}
+
+.svg-icon:active path {
+    fill: red;
+}
+
+.info-tab {
+    position: fixed;
+    right: 0;
+    top: 0;
+    /* width: 25%; */
+    max-width: 50%;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-bottom: 20px;
+    border: black 2px solid;
+    border-bottom-left-radius: 25px;
+    background-color: #f1f1f1;
+    border-right: none;
+    border-top: none;
+    z-index: 5;
+}
+
+.setting-tab {
+    position: fixed;
+    left: 0;
+    top: 0;
+    /* width: 25%; */
+    max-width: 50%;
+    padding: 20px;
+    border: black 2px solid;
+    border-bottom-right-radius: 25px;
+    background-color: #f1f1f1;
+    border-left: none;
+    border-top: none;
+    z-index: 5;
+}
+
+.info {
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.player-content {
+    margin-top: 5px;
+    height: max-content;
+    max-height: 100px;
+    width: 100%;
+    overflow: auto;
+    border: 1px rgb(118, 118, 118) solid;
+}
+
+.disconnected {
+    background-color: red;
+    color: white;
+    border-radius: 5px;
+    padding: 3px;
+}
+
+.connected {
+    background-color: green;
+    color: white;
+    border-radius: 5px;
+    padding: 3px;
+}
+
+.informal {
+    background-color: grey;
+    color: black;
+    border-radius: 5px;
+    padding: 3px;
+}
+
+.close-button {
+    background-color: red;
+    border-radius: 20%;
+    color: white;
+    padding: 5px 10px;
+    border: none;
+}
+
+.close-button:active {
+    background-color: white;
+    color: red;
+    border: red 1px solid;
+}
+
+.tooltip {
+    position: relative;
+}
+
+.tooltip .tooltip-text {
+    left: 30px;
+    visibility: hidden;
+    position: absolute;
+    z-index: 1;
+    width: max-content;
+    background-color: rgb(222, 222, 222);
+    color: black;
+    border: 1px solid black;
+    text-align: left;
+    padding: 5px 5px;
+    border-radius: 6px;
+}
+
+.tooltip:hover .tooltip-text {
+    visibility: visible;
+}
+
+.help-button {
+    border-radius: 20%;
+    padding: 5px 10px;
+    background-color: white;
+    color: grey;
+    border: grey 1px solid;
+}
+
+.primary {
+    background-color: rgb(85, 85, 233);
+    border-radius: 5%;
+    color: white;
+    padding: 5px 10px;
+    border: none;
+}
+
+.primary:active {
+    background-color: white;
+    color: rgb(85, 85, 233);
+    border: 1px rgb(85, 85, 233) solid;
+}
+
+.second {
+    background-color: white;
+    border-radius: 5%;
+    color: green;
+    padding: 5px 10px;
+    border: 1px green solid;
+}
+
+.second:active {
+    background-color: green;
+    color: white;
+}
+
+input {
+    /* border-radius: 10%; */
+}
+
+canvas {
+    background-color: transparent;
+}
+
+.game-content {
+    position: fixed;
+    display: flex;
+    /* background-color: #59accf; */
+    width: 90%;
+    height: 80%;
+    left: 5%;
+    bottom: 5%;
+}
