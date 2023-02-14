@@ -6,6 +6,16 @@ document.querySelector("#joinRoom").addEventListener("click", () => {
     initRoomEvent("join_room");
 });
 
+document.querySelector("#display-content-info").addEventListener("click", () => {
+    let content = document.querySelector(".content-info");
+    let mode = content.style.display;
+
+    console.log(mode);
+    if (mode != "block") content.style.display = "block";
+    else content.style.display = "none";
+});
+
+
 function initRoomEvent(event) {
     let pseudo = document.querySelector("#pseudo").value;
     let room = document.querySelector("#room").value;
