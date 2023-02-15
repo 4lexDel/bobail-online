@@ -1,5 +1,6 @@
 const { express, open, app, io, server, path } = require("./conf");
 const { Player } = require("./Player");
+const { Room } = require("./Room");
 
 app.use("/static", express.static(path.resolve(__dirname, "public", "static")));
 
@@ -31,24 +32,40 @@ io.on('connection', (socket) => {
 
             Player.removePlayerBySocketID(socket.id);
 
+            let roomObj = Room.getRoomByRoomID(room);
+            if (roomObj != null) {
+                roomObj.removePlayerBySocketID(socket.id);
+            }
+
             broadcast(socket, room, "players_list", Player.getPlayersByRoomID(room));
         }
     });
 
-    socket.on("join_room", (room, pseudo) => {
+    socket.on("join_room", (room, pseudo) => { //Vire d'une room dans tous les cas ????????
         if (io.sockets.adapter.rooms.has(room)) { //Est ce que la room existe
             leaveAllRoom(socket);
             Player.removePlayerBySocketID(socket.id); //Evite les doublons !!!
 
-            if (countPlayerInRoom(room) < 2) Player.addPlayer(new Player(socket.id, room, pseudo, "Player"));
-            else Player.addPlayer(new Player(socket.id, room, pseudo, "Spectator"));
             socket.join(room);
+
+            let newPlayerObj = null;
+            if (countPlayerInRoom(room) - 1 < 2) newPlayerObj = new Player(socket.id, room, pseudo, "Player2");
+            else newPlayerObj = new Player(socket.id, room, pseudo, "Spectator");
+
+            Player.addPlayer(newPlayerObj);
+            let roomObj = Room.getRoomByRoomID(room); //IMPORTANT
+
+            if (roomObj != null) {
+                roomObj.addPlayer(newPlayerObj);
+
+                messageToSocket(socket, "grid_refresh", roomObj.bobail.grid);
+            }
 
             broadcast(socket, room, "players_list", Player.getPlayersByRoomID(room), true); //Liste des joueurs
 
             io.to(socket.id).emit('room_joined', 1, room, "Room joined !");
         } else {
-            io.to(socket.id).emit('room_joined', -1, room, "This room dosn't exist...");
+            io.to(socket.id).emit('room_joined', 0, room, "This room dosn't exist...");
         }
     });
 
@@ -58,13 +75,49 @@ io.on('connection', (socket) => {
             Player.removePlayerBySocketID(socket.id); //Evite les doublons !!!
 
             socket.join(room);
-            Player.addPlayer(new Player(socket.id, room, pseudo, "Player"));
 
+            let newPlayerObj = new Player(socket.id, room, pseudo, "Player1", true); //Admin
+            Player.addPlayer(newPlayerObj);
+
+            let newRoomObj = new Room(room, newPlayerObj);
+            Room.addRoom(newRoomObj); //IMPORTANT
+
+            let grid = newRoomObj.startGame();
+
+            //messageToSocket(socket.id, "");
+            messageToSocket(socket, "grid_refresh", grid);
             broadcast(socket, room, "players_list", Player.getPlayersByRoomID(room), true);
 
             io.to(socket.id).emit('room_created', 1, room, "Room created !");
         } else {
             io.to(socket.id).emit('room_created', 0, room, "This room already exist...");
+        }
+    });
+
+    socket.on("piece_move", (x1, y1, x2, y2) => {
+        //console.log("Move => x1 : " + x1 + " | y1 : " + y1 + " | x2 : " + x2 + " | y2 : " + y2);
+        let playerObj = Player.getPlayerBySocketID(socket.id);
+
+        if (playerObj != null) {
+            let status = playerObj.status;
+
+            let playerToPlay = -1;
+            if (status == "Player1") playerToPlay = 1;
+            else if (status == "Player2") playerToPlay = 2;
+
+            if (playerToPlay != -1) {
+                let roomID = playerObj.roomID;
+
+                let roomObj = Room.getRoomByRoomID(roomID);
+
+                if (roomObj != null) {
+                    let moveResult = roomObj.bobail.movePiece(playerToPlay, parseInt(x1), parseInt(y1), parseInt(x2), parseInt(y2));
+                    //console.log(moveResult);
+                    if (moveResult) {
+                        broadcast(socket, roomID, "grid_refresh", roomObj.bobail.grid, true);
+                    }
+                }
+            }
         }
     });
 });
@@ -83,6 +136,10 @@ function countPlayerInRoom(room) {
 //     return io.sockets.adapter.rooms.get(room);
 // }
 
+function messageToSocket(socket, event, data) {
+    io.to(socket.id).emit(event, data);
+}
+
 function broadcast(sender, room, event, data, all = false) {
     if (all) io.to(room).emit(event, data);
     else sender.to(room).emit(event, data);
@@ -96,7 +153,14 @@ function leaveAllRoom(socket) {
         rooms.forEach(room => {
             if (first) {
                 first = false;
-            } else socket.leave(room);
+            } else {
+                socket.leave(room);
+
+                let roomObj = Room.getRoomByRoomID(room);
+                if (roomObj != null) {
+                    roomObj.removePlayerBySocketID(socket.id);
+                }
+            }
         });
     }
 }

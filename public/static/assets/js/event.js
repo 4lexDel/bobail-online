@@ -1,6 +1,6 @@
 document.querySelector("#createRoom").addEventListener("click", () => {
     initRoomEvent("create_room");
-});
+}); //ACTION
 
 document.querySelector("#joinRoom").addEventListener("click", () => {
     initRoomEvent("join_room");
@@ -44,6 +44,14 @@ socket.on("message", (data) => {
 socket.on("players_list", (players) => {
     displayPlayerList(players)
 });
+
+socket.on("grid_refresh", (grid) => {
+    if (grid != null) canvasObject.setPlayerMap(grid);
+});
+
+
+
+/**------------------------------------------------------------------------------------------------------------------ */
 
 function displayRoomInformation(state, room) {
     if (state == 1) {

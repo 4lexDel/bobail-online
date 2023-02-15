@@ -84,6 +84,12 @@ class Tilemap {
         this.grid[mx][my] = value;
     }
 
+    getGridCoord(x, y) {
+        let rx = parseInt((x - this.marginCenterX) / this.dx);
+        let ry = parseInt((y - this.marginCenterY) / this.dy);
+        return { x: rx, y: ry };
+    }
+
     resetGrid() {
         let value = 0;
 
@@ -95,4 +101,16 @@ class Tilemap {
             }
         }
     }
+
+    // resetGridByValue(val) {
+    //     let value = 0;
+
+    //     if (this.tileSets.length > 0) value = this.tileSets[0].id;
+
+    //     for (let x = 0; x < this.grid.length; x++) {
+    //         for (let y = 0; y < this.grid[x].length; y++) {
+    //             this.grid[x][y] = value;
+    //         }
+    //     }
+    // }
 }

@@ -1,0 +1,8 @@
+Client :
+    Ergonomie => Retourner le plateau pour le joueur 2
+    A qui de jouer ???
+    Erreur ??
+    probleme de rendu lors de la reception de nouvelle grille
+
+Server :
+    Gestion player 1/2 a revoir !!
