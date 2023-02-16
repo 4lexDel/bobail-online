@@ -1,6 +1,10 @@
 class Bobail {
 
     constructor() {
+        this.resetGame();
+    }
+
+    resetGame() {
         this.grid = [
             [2, 0, 0, 0, 1],
             [2, 0, 0, 0, 1],
@@ -13,10 +17,12 @@ class Bobail {
 
         this.firstMove = true; //Particularité
         this.bobailMove = false; //ordre de coup
+
+        this.winner = -1; //Qui a gagner ?
     }
 
     movePiece(playerToPlay, x1, y1, x2, y2) { //move possible => true         Coord 1 = piece select, coord 2 = destination
-        if (playerToPlay == this.playerToPlay) {
+        if (this.winner == -1 && playerToPlay == this.playerToPlay) {
             if (this.getValue(x1, y1) == -1 || this.getValue(x2, y2) == -1) return false;
 
             if (this.firstMove) { //Move de piece seulement
@@ -35,7 +41,10 @@ class Bobail {
 
                         let bobailWin = this.isBobailWin(x2, y2);
 
-                        if (bobailWin != -1) console.log(bobailWin + " classic Win !");
+                        if (bobailWin != -1) {
+                            console.log(bobailWin + " classic Win !");
+                            this.winner = bobailWin;
+                        }
                         this.bobailMove = true;
                         return true;
                     } else return false;
@@ -43,7 +52,10 @@ class Bobail {
                     if (this.grid[x1][y1] == this.playerToPlay && this.isCorrectDestinationPiece(x1, y1, x2, y2)) {
                         /////---------------------------------------------------------------------------------------   MOVE !!!!!!!!!!!!!!!!
                         this.doMovePiece(x1, y1, x2, y2);
-                        if (this.isBobailStuck()) console.log(this.playerToPlay + " stuck Win !");
+                        if (this.isBobailStuck()) {
+                            console.log(this.playerToPlay + " stuck Win !");
+                            this.winner = this.playerToPlay;
+                        }
                         this.switchPlayer();
                         return true;
                     } else return false;

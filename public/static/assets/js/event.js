@@ -55,11 +55,15 @@ socket.on("grid_refresh", (grid) => {
     if (grid != null) {
         //console.log(playerInfo);
         if (playerInfo != null) {
-            let gridMode = playerInfo.status == "Player2" ? true : false;
+            let gridMode = playerInfo.status == "Player2" ? true : false; //Reverse map ?
 
             canvasObject.setPlayerMap(grid, gridMode);
         }
     }
+});
+
+socket.on("real_time_info", (message) => {
+    document.querySelector(".text-moving").innerHTML = message;
 });
 
 

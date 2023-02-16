@@ -61,6 +61,7 @@ io.on('connection', (socket) => {
                 roomObj.addPlayer(newPlayerObj);
 
                 messageToSocket(socket, "grid_refresh", roomObj.bobail.grid);
+                messageToSocket(socket, "real_time_info", "<span style=\"color:red\">Player 1 to play</span>");
             }
 
             broadcast(socket, room, "players_list", Player.getPlayersByRoomID(room), true); //Liste des joueurs
@@ -86,9 +87,11 @@ io.on('connection', (socket) => {
 
             //messageToSocket(socket.id, "");
 
-            io.to(socket.id).emit('room_created', 1, newPlayerObj, "Room created !"); //Probleme asynchrone ??
+            io.to(socket.id).emit('room_created', 1, newPlayerObj, "Room created !"); //Probleme asynchrone ?? ==> DOIT ARRIVER AVANT !!
 
             messageToSocket(socket, "grid_refresh", grid);
+            messageToSocket(socket, "real_time_info", "<span style=\"color:red\">Player 1 to play</span>");
+
             broadcast(socket, room, "players_list", Player.getPlayersByRoomID(room), true);
         } else {
             io.to(socket.id).emit('room_created', 0, null, "This room already exist...");
@@ -116,6 +119,16 @@ io.on('connection', (socket) => {
                     //console.log(moveResult);
                     if (moveResult) {
                         broadcast(socket, roomID, "grid_refresh", roomObj.bobail.grid, true);
+
+                        let content = "";
+
+                        if (roomObj.bobail.winner != -1) {
+                            if (roomObj.bobail.end == 1) content = '<span style="color:red">Player 1 win !</span>';
+                            else content = '<span style="color:orange">Player 2 win !</span>';
+                        } else if (roomObj.bobail.playerToPlay == 2) content = '<span style="color:orange">Player 2 to play</span>';
+                        else if (roomObj.bobail.playerToPlay == 1) content = '<span style="color:red">Player 1 to play</span>';
+
+                        broadcast(socket, roomID, "real_time_info", content, true);
                     }
                 }
             }

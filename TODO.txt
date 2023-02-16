@@ -1,12 +1,11 @@
 Client :
-    Ergonomie => Retourner le plateau pour le joueur 2
-    A qui de jouer ???
+    1. rejouer
+    2. proposition de coup
+    3. gestion de selection de piece à revoir => mauvaise piece compte pas pour une arrivé
     Erreur ??
     probleme de rendu lors de la reception de nouvelle grille
     timer
-    victoire ??
-    rejouer
-    proposition de coup
+    
     afficher coordonées
     afficher la liste des rooms
 
