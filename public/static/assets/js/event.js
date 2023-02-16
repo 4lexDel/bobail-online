@@ -47,6 +47,7 @@ socket.on("room_created", (state, player, message) => {
 
 socket.on("room_left", () => {
     resetAllInformations("Disconnected...");
+    canvasObject.mapPlayer.resetGrid();
 });
 
 socket.on("message", (data) => {
@@ -114,4 +115,5 @@ function resetAllInformations(message) {
     document.querySelector(".room-content").innerHTML = '<span>Undefined</span>';
     document.querySelector(".player-content").innerHTML = '<span>Undefined</span>';
     document.querySelector(".info-content").innerHTML = '<span class="informal">' + message + '</span>';
+    document.querySelector(".text-moving").innerHTML = "";
 }
