@@ -61,7 +61,8 @@ io.on('connection', (socket) => {
                 roomObj.addPlayer(newPlayerObj);
 
                 messageToSocket(socket, "grid_refresh", roomObj.bobail.grid);
-                messageToSocket(socket, "real_time_info", "<span style=\"color:red\">Player 1 to play</span>");
+                let content = getRealTimeInformation(roomObj);
+                messageToSocket(socket, "real_time_info", content);
             }
 
             broadcast(socket, room, "players_list", Player.getPlayersByRoomID(room), true); //Liste des joueurs
@@ -90,7 +91,8 @@ io.on('connection', (socket) => {
             io.to(socket.id).emit('room_created', 1, newPlayerObj, "Room created !"); //Probleme asynchrone ?? ==> DOIT ARRIVER AVANT !!
 
             messageToSocket(socket, "grid_refresh", grid);
-            messageToSocket(socket, "real_time_info", "<span style=\"color:red\">Player 1 to play</span>");
+            let content = getRealTimeInformation(newRoomObj);
+            messageToSocket(socket, "real_time_info", content);
 
             broadcast(socket, room, "players_list", Player.getPlayersByRoomID(room), true);
         } else {
@@ -120,13 +122,7 @@ io.on('connection', (socket) => {
                     if (moveResult) {
                         broadcast(socket, roomID, "grid_refresh", roomObj.bobail.grid, true);
 
-                        let content = "";
-
-                        if (roomObj.bobail.winner != -1) {
-                            if (roomObj.bobail.end == 1) content = '<span style="color:red">Player 1 win !</span>';
-                            else content = '<span style="color:orange">Player 2 win !</span>';
-                        } else if (roomObj.bobail.playerToPlay == 2) content = '<span style="color:orange">Player 2 to play</span>';
-                        else if (roomObj.bobail.playerToPlay == 1) content = '<span style="color:red">Player 1 to play</span>';
+                        let content = getRealTimeInformation(roomObj);
 
                         broadcast(socket, roomID, "real_time_info", content, true);
                     }
@@ -135,6 +131,18 @@ io.on('connection', (socket) => {
         }
     });
 });
+
+function getRealTimeInformation(roomObj) {
+    if (roomObj != null && roomObj.bobail != null) {
+        if (roomObj.bobail.winner != -1) {
+            if (roomObj.bobail.end == 1) return '<span style="color:red">Player 1 win !</span>';
+            else return '<span style="color:orange">Player 2 win !</span>';
+        } else if (roomObj.bobail.playerToPlay == 2) return '<span style="color:orange">Player 2 to play</span>';
+        else if (roomObj.bobail.playerToPlay == 1) return '<span style="color:red">Player 1 to play</span>';
+    }
+
+    return "";
+}
 
 function countPlayerInRoom(room) {
     let players = io.sockets.adapter.rooms.get(room);
