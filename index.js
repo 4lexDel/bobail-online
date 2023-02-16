@@ -25,26 +25,12 @@ io.on('connection', (socket) => {
     socket.on("disconnect", async() => {
         console.log("Au revoir " + socket.id);
 
-        let player = Player.getPlayerBySocketID(socket.id);
-
-        if (player != null) {
-            let room = player.roomID;
-
-            Player.removePlayerBySocketID(socket.id);
-
-            let roomObj = Room.getRoomByRoomID(room);
-            if (roomObj != null) {
-                roomObj.removePlayerBySocketID(socket.id);
-            }
-
-            broadcast(socket, room, "players_list", Player.getPlayersByRoomID(room));
-        }
+        disconnectPlayer(socket);
     });
 
     socket.on("join_room", (room, pseudo) => { //Vire d'une room dans tous les cas ????????
         if (io.sockets.adapter.rooms.has(room)) { //Est ce que la room existe
-            leaveAllRoom(socket);
-            Player.removePlayerBySocketID(socket.id); //Evite les doublons !!!
+            disconnectPlayer(socket);
 
             socket.join(room);
 
@@ -71,10 +57,14 @@ io.on('connection', (socket) => {
         }
     });
 
+    socket.on("leave_room", () => {
+        disconnectPlayer(socket);
+        io.to(socket.id).emit('room_left');
+    });
+
     socket.on("create_room", (room, pseudo) => {
         if (!io.sockets.adapter.rooms.has(room)) { //Est ce que la room n'existe pas ?
-            leaveAllRoom(socket);
-            Player.removePlayerBySocketID(socket.id); //Evite les doublons !!!
+            disconnectPlayer(socket);
 
             socket.join(room);
 
@@ -131,6 +121,24 @@ io.on('connection', (socket) => {
         }
     });
 });
+
+function disconnectPlayer(socket) {
+    leaveAllRoom(socket);
+    let player = Player.getPlayerBySocketID(socket.id);
+
+    if (player != null) {
+        let room = player.roomID;
+
+        Player.removePlayerBySocketID(socket.id);
+
+        let roomObj = Room.getRoomByRoomID(room);
+        if (roomObj != null) {
+            roomObj.removePlayerBySocketID(socket.id);
+        }
+
+        broadcast(socket, room, "players_list", Player.getPlayersByRoomID(room));
+    }
+}
 
 function getRealTimeInformation(roomObj) {
     if (roomObj != null && roomObj.bobail != null) {

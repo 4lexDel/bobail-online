@@ -15,6 +15,10 @@ document.querySelector("#display-content-info").addEventListener("click", () => 
     else content.style.display = "none";
 });
 
+document.querySelector("#leave-room").addEventListener("click", () => {
+    socket.emit("leave_room");
+});
+
 
 function initRoomEvent(event) {
     let pseudo = document.querySelector("#pseudo").value;
@@ -39,6 +43,10 @@ socket.on("room_created", (state, player, message) => {
         playerInfo = player;
     }
     displayMessageInformation(state, message);
+});
+
+socket.on("room_left", () => {
+    resetAllInformations("Disconnected...");
 });
 
 socket.on("message", (data) => {
@@ -99,4 +107,11 @@ function displayPlayerList(players) {
     content += "</ul>";
 
     document.querySelector(".player-content").innerHTML = content;
+}
+
+function resetAllInformations(message) {
+    document.querySelector(".status-content").innerHTML = '<span class="disconnected">Disconnected</span>';
+    document.querySelector(".room-content").innerHTML = '<span>Undefined</span>';
+    document.querySelector(".player-content").innerHTML = '<span>Undefined</span>';
+    document.querySelector(".info-content").innerHTML = '<span class="informal">' + message + '</span>';
 }
