@@ -25,13 +25,19 @@ function initRoomEvent(event) {
     socket.emit(event, room, pseudo);
 }
 
-socket.on("room_joined", (state, room, message) => {
-    displayRoomInformation(state, room);
+socket.on("room_joined", (state, player, message) => {
+    if (player != null) {
+        displayRoomInformation(state, player.roomID);
+        playerInfo = player;
+    }
     displayMessageInformation(state, message);
 });
 
-socket.on("room_created", (state, room, message) => {
-    displayRoomInformation(state, room);
+socket.on("room_created", (state, player, message) => {
+    if (player != null) {
+        displayRoomInformation(state, player.roomID);
+        playerInfo = player;
+    }
     displayMessageInformation(state, message);
 });
 
@@ -46,7 +52,14 @@ socket.on("players_list", (players) => {
 });
 
 socket.on("grid_refresh", (grid) => {
-    if (grid != null) canvasObject.setPlayerMap(grid);
+    if (grid != null) {
+        //console.log(playerInfo);
+        if (playerInfo != null) {
+            let gridMode = playerInfo.status == "Player2" ? true : false;
+
+            canvasObject.setPlayerMap(grid, gridMode);
+        }
+    }
 });
 
 

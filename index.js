@@ -52,6 +52,8 @@ io.on('connection', (socket) => {
             if (countPlayerInRoom(room) - 1 < 2) newPlayerObj = new Player(socket.id, room, pseudo, "Player2");
             else newPlayerObj = new Player(socket.id, room, pseudo, "Spectator");
 
+            io.to(socket.id).emit('room_joined', 1, newPlayerObj, "Room joined !");
+
             Player.addPlayer(newPlayerObj);
             let roomObj = Room.getRoomByRoomID(room); //IMPORTANT
 
@@ -62,10 +64,8 @@ io.on('connection', (socket) => {
             }
 
             broadcast(socket, room, "players_list", Player.getPlayersByRoomID(room), true); //Liste des joueurs
-
-            io.to(socket.id).emit('room_joined', 1, room, "Room joined !");
         } else {
-            io.to(socket.id).emit('room_joined', 0, room, "This room dosn't exist...");
+            io.to(socket.id).emit('room_joined', 0, null, "This room dosn't exist...");
         }
     });
 
@@ -85,12 +85,13 @@ io.on('connection', (socket) => {
             let grid = newRoomObj.startGame();
 
             //messageToSocket(socket.id, "");
+
+            io.to(socket.id).emit('room_created', 1, newPlayerObj, "Room created !"); //Probleme asynchrone ??
+
             messageToSocket(socket, "grid_refresh", grid);
             broadcast(socket, room, "players_list", Player.getPlayersByRoomID(room), true);
-
-            io.to(socket.id).emit('room_created', 1, room, "Room created !");
         } else {
-            io.to(socket.id).emit('room_created', 0, room, "This room already exist...");
+            io.to(socket.id).emit('room_created', 0, null, "This room already exist...");
         }
     });
 

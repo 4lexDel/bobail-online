@@ -3,6 +3,12 @@ Client :
     A qui de jouer ???
     Erreur ??
     probleme de rendu lors de la reception de nouvelle grille
+    timer
+    victoire ??
+    rejouer
+    proposition de coup
+    afficher coordonées
+    afficher la liste des rooms
 
 Server :
     Gestion player 1/2 a revoir !!

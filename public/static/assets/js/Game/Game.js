@@ -143,7 +143,17 @@ class Game extends GameBase { //A renommer ?
             this.actionTime = 1;
 
             // console.log("test");
-            socket.emit("piece_move", this.x1, this.y1, this.x2, this.y2);
+            if (playerInfo != null && (playerInfo.status == "Player1" || playerInfo.status == "Player2")) {
+                if (playerInfo.status == "Player2") {
+                    //reverse coord
+                    this.x1 = 4 - this.x1;
+                    this.y1 = 4 - this.y1;
+                    this.x2 = 4 - this.x2;
+                    this.y2 = 4 - this.y2;
+                }
+
+                socket.emit("piece_move", this.x1, this.y1, this.x2, this.y2);
+            }
         }
     }
 
@@ -164,7 +174,8 @@ class Game extends GameBase { //A renommer ?
         if (this.mapAction != null) this.mapAction.display(this.ctx);
     }
 
-    setPlayerMap(newGrid) {
+    setPlayerMap(newGrid, reverse = false) {
         this.mapPlayer.grid = newGrid;
+        if (reverse) this.mapPlayer.reverseGrid();
     }
 }

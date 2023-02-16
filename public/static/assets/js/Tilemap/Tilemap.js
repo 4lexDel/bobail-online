@@ -75,6 +75,18 @@ class Tilemap {
         }
     }
 
+    reverseGrid() {
+        let interArray = this.grid.map(function(arr) {
+            return arr.slice();
+        });
+
+        for (let x = 0; x < this.grid.length; x++) {
+            for (let y = 0; y < this.grid[x].length; y++) {
+                this.grid[x][y] = interArray[4 - x][4 - y];
+            }
+        }
+    }
+
     setTileID(x, y, value) {
         if (x < this.marginCenterX || x > this.canvasWidth - this.marginCenterX || y < this.marginCenterY || y > this.canvasHeight - this.marginCenterY) return null;
 
