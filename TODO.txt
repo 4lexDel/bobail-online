@@ -1,7 +1,6 @@
 Client :
     1. rejouer ==> POP UP
     2. proposition de coup
-    3. gestion de selection de piece à revoir => mauvaise piece compte pas pour une arrivé
     Erreur ??
     probleme de rendu lors de la reception de nouvelle grille
     timer
@@ -14,4 +13,4 @@ Client :
 
 
 Server :
-    Gestion player 1/2 a revoir !!
+    Gestion player 1/2 a revoir ?

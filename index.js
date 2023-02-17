@@ -34,14 +34,22 @@ io.on('connection', (socket) => {
 
             socket.join(room);
 
-            let newPlayerObj = null;
-            if (countPlayerInRoom(room) - 1 < 2) newPlayerObj = new Player(socket.id, room, pseudo, "Player2");
-            else newPlayerObj = new Player(socket.id, room, pseudo, "Spectator");
+            let roomObj = Room.getRoomByRoomID(room); //IMPORTANT
+
+            let currentPlayer1 = roomObj.getPlayerByStatus("Player1");
+            let currentPlayer2 = roomObj.getPlayerByStatus("Player2");
+
+            let status = null;
+
+            if (currentPlayer1 == null) status = "Player1";
+            else if (currentPlayer2 == null) status = "Player2";
+            else status = "Spectator";
+
+            let newPlayerObj = new Player(socket.id, room, pseudo, status);
 
             io.to(socket.id).emit('room_joined', 1, newPlayerObj, "Room joined !");
 
             Player.addPlayer(newPlayerObj);
-            let roomObj = Room.getRoomByRoomID(room); //IMPORTANT
 
             if (roomObj != null) {
                 roomObj.addPlayer(newPlayerObj);
@@ -81,6 +89,7 @@ io.on('connection', (socket) => {
             io.to(socket.id).emit('room_created', 1, newPlayerObj, "Room created !"); //Probleme asynchrone ?? ==> DOIT ARRIVER AVANT !!
 
             messageToSocket(socket, "grid_refresh", grid);
+
             let content = getRealTimeInformation(newRoomObj);
             messageToSocket(socket, "real_time_info", content);
 
@@ -120,6 +129,23 @@ io.on('connection', (socket) => {
             }
         }
     });
+
+    socket.on("restart_game", () => {
+        let playerObj = Player.getPlayerBySocketID(socket.id);
+        let roomObj = Room.getRoomByRoomID(playerObj.roomID);
+
+        if (roomObj != null) {
+            if (!roomObj.bobail.firstMove) { //Already reset ?
+                roomObj.bobail.resetGame();
+
+                broadcast(socket, playerObj.roomID, "grid_refresh", roomObj.bobail.grid, true);
+
+                let content = getRealTimeInformation(roomObj);
+
+                broadcast(socket, playerObj.roomID, "real_time_info", content, true);
+            }
+        }
+    });
 });
 
 function disconnectPlayer(socket) {
@@ -143,6 +169,7 @@ function disconnectPlayer(socket) {
 function getRealTimeInformation(roomObj) {
     if (roomObj != null && roomObj.bobail != null) {
         if (roomObj.bobail.winner != -1) {
+            handleEndGame(roomObj);
             if (roomObj.bobail.winner == 1) return '<span style="color:red">Player 1 win !</span>';
             else return '<span style="color:orange">Player 2 win !</span>';
         } else if (roomObj.bobail.playerToPlay == 2) return '<span style="color:orange">Player 2 to play</span>';
@@ -150,6 +177,17 @@ function getRealTimeInformation(roomObj) {
     }
 
     return "";
+}
+
+function handleEndGame(roomObj) {
+    let player1 = roomObj.getPlayerByStatus("Player1");
+    let player2 = roomObj.getPlayerByStatus("Player2");
+
+    // console.log(player1);
+    // console.log(player2);
+
+    io.to(player1.socketID).emit("end_game");
+    io.to(player2.socketID).emit("end_game");
 }
 
 function countPlayerInRoom(room) {

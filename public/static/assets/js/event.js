@@ -10,15 +10,19 @@ document.querySelector("#display-content-info").addEventListener("click", () => 
     let content = document.querySelector(".content-info");
     let mode = content.style.display;
 
-    console.log(mode);
+    // console.log(mode);
     if (mode != "block") content.style.display = "block";
     else content.style.display = "none";
 });
 
-document.querySelector("#leave-room").addEventListener("click", () => {
+document.querySelectorAll(".leave-room").forEach((button) => button.addEventListener("click", () => {
+    // console.log("LEAVE");
     socket.emit("leave_room");
-});
+}));
 
+document.querySelector("#restartGame").addEventListener("click", () => {
+    socket.emit("restart_game");
+});
 
 function initRoomEvent(event) {
     let pseudo = document.querySelector("#pseudo").value;
@@ -75,6 +79,10 @@ socket.on("real_time_info", (message) => {
     document.querySelector(".text-moving").innerHTML = message;
 });
 
+socket.on("end_game", () => {
+    // console.log("end");
+    document.querySelector("#endGameModal").style.display = "block";
+});
 
 
 /**------------------------------------------------------------------------------------------------------------------ */

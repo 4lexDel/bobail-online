@@ -55,6 +55,14 @@ class Room {
         return player;
     }
 
+    getPlayerByStatus(status) {
+        let player = this.players.find(player => {
+            if (player.status == status) return player;
+        });
+
+        return player;
+    }
+
     startGame() {
         this.bobail = new Bobail();
         return this.bobail.grid;
