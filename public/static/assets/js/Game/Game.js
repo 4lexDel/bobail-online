@@ -127,7 +127,9 @@ class Game extends GameBase { //A renommer ?
 
         // console.log(gridCoord);
 
-        if (this.actionTime == 1) {
+        let valSelected = this.getGridValue(gridCoord.x, gridCoord.y, this.mapPlayer.grid);
+
+        if (this.actionTime == 1 && valSelected != 0 && valSelected != -1) {
             this.x1 = gridCoord.x;
             this.y1 = gridCoord.y;
 
@@ -135,26 +137,38 @@ class Game extends GameBase { //A renommer ?
 
             this.actionTime = 2;
         } else {
-            this.x2 = gridCoord.x;
-            this.y2 = gridCoord.y;
+            let valSelected = this.getGridValue(gridCoord.x, gridCoord.y, this.mapPlayer.grid);
 
-            this.mapAction.setTileID(x, y, 2);
+            if (valSelected != 0) { //                          2ième case forcement vide !!
+                this.mapAction.setTileID(x, y, 1);
+                this.actionTime = 1;
+            } else {
+                this.x2 = gridCoord.x;
+                this.y2 = gridCoord.y;
 
-            this.actionTime = 1;
+                this.mapAction.setTileID(x, y, 2);
 
-            // console.log("test");
-            if (playerInfo != null && (playerInfo.status == "Player1" || playerInfo.status == "Player2")) {
-                if (playerInfo.status == "Player2") {
-                    //reverse coord
-                    this.x1 = 4 - this.x1;
-                    this.y1 = 4 - this.y1;
-                    this.x2 = 4 - this.x2;
-                    this.y2 = 4 - this.y2;
+                this.actionTime = 1;
+
+                // console.log("test");
+                if (playerInfo != null && (playerInfo.status == "Player1" || playerInfo.status == "Player2")) {
+                    if (playerInfo.status == "Player2") {
+                        //reverse coord
+                        this.x1 = 4 - this.x1;
+                        this.y1 = 4 - this.y1;
+                        this.x2 = 4 - this.x2;
+                        this.y2 = 4 - this.y2;
+                    }
+
+                    socket.emit("piece_move", this.x1, this.y1, this.x2, this.y2);
                 }
-
-                socket.emit("piece_move", this.x1, this.y1, this.x2, this.y2);
             }
         }
+    }
+
+    getGridValue(x, y, grid) {
+        if (x < 0 || x >= 5 || y < 0 || y >= 5) return -1;
+        return grid[x][y];
     }
 
     draw() {

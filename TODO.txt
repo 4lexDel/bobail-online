@@ -1,5 +1,5 @@
 Client :
-    1. rejouer
+    1. rejouer ==> POP UP
     2. proposition de coup
     3. gestion de selection de piece à revoir => mauvaise piece compte pas pour une arrivé
     Erreur ??
@@ -8,6 +8,10 @@ Client :
     
     afficher coordonées
     afficher la liste des rooms
+
+    ERREUR GAGNANTS
+
+
 
 Server :
     Gestion player 1/2 a revoir !!

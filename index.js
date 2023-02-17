@@ -143,7 +143,7 @@ function disconnectPlayer(socket) {
 function getRealTimeInformation(roomObj) {
     if (roomObj != null && roomObj.bobail != null) {
         if (roomObj.bobail.winner != -1) {
-            if (roomObj.bobail.end == 1) return '<span style="color:red">Player 1 win !</span>';
+            if (roomObj.bobail.winner == 1) return '<span style="color:red">Player 1 win !</span>';
             else return '<span style="color:orange">Player 2 win !</span>';
         } else if (roomObj.bobail.playerToPlay == 2) return '<span style="color:orange">Player 2 to play</span>';
         else if (roomObj.bobail.playerToPlay == 1) return '<span style="color:red">Player 1 to play</span>';
